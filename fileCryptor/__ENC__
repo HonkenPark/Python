@@ -1,0 +1,54 @@
+import os
+from cryptography.fernet import Fernet
+
+class SimpleEnDecrypt:
+    def __init__(self, key=os.path.isfile('./__TKN__')):
+        if key is False:
+            print("No key.. Generate !!")
+            key = Fernet.generate_key()
+            with open('./__TKN__', mode='wb') as keyValue:
+                keyValue.write(key)
+                keyValue.seek(0)
+                keyValue.close()
+        else:
+            print("Key Exist.. Using !!")
+            with open('./__TKN__', mode='rb') as keyValue:
+                key = keyValue.read()
+                keyValue.close()
+
+        self.key = key
+        self.f = Fernet(self.key)
+        
+    def encrypt(self, data, is_out_string=True):
+        if isinstance(data, bytes):
+            ou = self.f.encrypt(data) # Byte
+        else:
+            ou = self.f.encrypt(data.encode('utf-8')) # Encoding First
+        if is_out_string is True:
+            return ou.decode('utf-8') # In case of string, return after decodning
+        else:
+            return ou        
+
+simpleEnDecrypt = SimpleEnDecrypt()
+path_dir = os.getcwd()
+file_list = os.listdir(path_dir)
+
+for i in file_list:
+    # if any(format in "__ENC__.py" for format in i):
+    #     continue
+    # if any(format in "__DEC__.py" for format in i):
+    #     continue
+    # if any(format in "key" for format in i):
+    #     continue
+    if "__ENC__" in i:
+        continue
+    if "__DEC__" in i:
+        continue
+    if "__TKN__" in i:
+        continue
+    if "__CRPT__.bat" in i:
+        continue
+    encrypt_text = simpleEnDecrypt.encrypt(i)
+    os.rename(path_dir + '/' + i, path_dir + '/' + encrypt_text)
+
+
