@@ -1,7 +1,5 @@
 import requests
 import json
-import webbrowser
-from selenium import webdriver
 
 print("*****************************************************************************")
 print("이 프로그램은 본방 사수를 하지 못하고 녹방을 네이버 스포츠에서 다시보기를 할 때")
@@ -10,21 +8,6 @@ print("제작된 단순 링크 탐지용 프로그램 입니다.")
 print("*****************************************************************************")
 print("")
 print("")
-
-def askType():
-    ret = input('대회의 타입을 알려주세요. (1: LCK, 2: Worlds): ')
-    while 1:
-        if int(ret) == 1:
-            print("LCK를 선택하셨습니다.")
-            break
-        elif int(ret) == 2:
-            print("Worlds를 선택하셨습니다.")
-            break
-        else:
-            print("1번과 2번중에서 선택하세요.")
-            ret = input('대회의 타입을 알려주세요. (1: LCK, 2: Worlds): ')
-            continue
-    return int(ret);
 
 def askTeam1():
     ret = input('1-1. 시청을 원하시는 팀명을 적으세요.(ex.T1)): ')
@@ -69,14 +52,7 @@ def askDate():
             continue
     return str(ret)
 
-chrome_path = "C:/Program Files/Google/Chrome/Application/chrome.exe"
-
-leagueType = askType()
-# print("leagueType: ", leagueType);
-if leagueType == 1:
-    listUrl = "https://game.naver.com/esports/videos/league/lck" # LCK
-else:
-    listUrl = "https://game.naver.com/esports/videos/league/world_championship"; # Worlds
+listUrl = "https://game.naver.com/esports/videos/league/world_championship"; # Worlds
 
 preDel = "{\"props\":{"
 postDel = "\"appGip\":true}"
@@ -97,22 +73,17 @@ jsonText += postDel
 #     print(json_data['popularVideo'])
 
 jsonObj = json.loads(jsonText)
-# print(jsonText)
 popularList = jsonObj['props']['initialState']['video']['perTopLeagueVideo']['content']
 
 matchTeam1 = askTeam1()
 matchTeam2 = askTeam2()
-if leagueType == 1:
-    matchSet = askSet() # LCK용 (ex. T1-NS 1세트)
+matchSet = askSet()
 matchDate = askDate()
 
 print("")
 print("해당 정보로 검색을 시작합니다.")
 print("==============================================")
-if leagueType == 1:
-    print(matchTeam1 + " VS " + matchTeam2 + " " + matchSet + " (" + matchDate + ")")
-else:
-    print(matchTeam1 + " VS " + matchTeam2 + " " + " (" + matchDate + ")")
+print(matchTeam1 + " VS " + matchTeam2 + " " + matchSet + " (" + matchDate + ")")
 print("==============================================")
 for item in popularList:
     if matchTeam1 in item['title']:
@@ -122,21 +93,14 @@ for item in popularList:
                     finalUrl += str(item['id'])
                     findResult = True
                     break
-
+            
 
 if findResult == True:
     # options = webdriver.ChromeOptions()
     # options.add_argument('start-maximized')
     # driver = webdriver.Chrome('chromedriver.exe', options=options)
     # driver.get(finalUrl)
+    print("아래 URL을 복사하여 브라우저에 입력하여 감상하세요!")
     print(finalUrl)
-    webbrowser.open(finalUrl)
 else:
     print("!!!!!!!!!!! 검색 결과가 없습니다. !!!!!!!!!!!")
-
-# print(element)
-# driver.quit()
-
-# options.add_argument('headless')
-# options.add_argument('start-maximized')
-# driver = webdriver.Chrome('chromedriver.exe', options=options)
